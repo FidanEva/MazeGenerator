@@ -154,7 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mazeCellPrefab: {fileID: 6851229361086389607, guid: bb89d51829e212047991784b0da68b13, type: 3}
   cellSize: {x: 3.4, y: 3.4}
-  gridSize: {x: 8, y: 6}
+  gridSize: {x: 11, y: 6}
 --- !u!4 &1323187790
 Transform:
   m_ObjectHideFlags: 0

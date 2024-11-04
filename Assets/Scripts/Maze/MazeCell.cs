@@ -5,12 +5,11 @@ namespace ProceduralMazeGeneration
 {
     public class MazeCell : MonoBehaviour
     {
+        #region Maze Generation
+
         [SerializeField] private MazeWall[] walls = new MazeWall[4];
-
         [SerializeField] private GameObject unvisitedWall;
-
-        [Space] [SerializeField] private GameObject entranceDoor;
-        [SerializeField] private GameObject exitDoor;
+        [SerializeField] private MazeDoor[] doors = new MazeDoor[2];
 
         public bool IsVisited { get; private set; }
 
@@ -20,14 +19,10 @@ namespace ProceduralMazeGeneration
             IsVisited = true;
         }
 
-        public void IsEntrance()
+        public void InitDoor(Door argDoor)
         {
-            entranceDoor.SetActive(false);
-        }
-
-        public void IsExit()
-        {
-            exitDoor.SetActive(false);
+            var door = doors.FirstOrDefault(d => d.door == argDoor);
+            if (door != null) door.Init();
         }
 
         public void ClearWall(Side argSide)
@@ -46,5 +41,33 @@ namespace ProceduralMazeGeneration
 
             unvisitedWall.SetActive(true);
         }
+
+        #endregion
+
+        #region A Star
+
+        public int x;
+        public int y;
+        
+        public int gCost = int.MaxValue;
+        public int hCost;
+        public int fCost;
+
+        public MazeCell cameFromNode = null;
+
+        public void SetGridIndices(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+            
+            CalculateFCost();
+        }
+
+        public void CalculateFCost()
+        {
+            fCost = gCost + hCost;
+        }
+
+        #endregion
     }
 }

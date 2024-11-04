@@ -341,8 +341,15 @@ MonoBehaviour:
   - {fileID: 5398048363396110799}
   - {fileID: 6070338566735009976}
   unvisitedWall: {fileID: 7541243220596768977}
-  entranceDoor: {fileID: 7131644102263880503}
-  exitDoor: {fileID: 7888957939002982279}
+  doors:
+  - {fileID: 5725488484947967272}
+  - {fileID: 2129632495739259255}
+  x: 0
+  y: 0
+  gCost: 0
+  hCost: 0
+  fCost: 0
+  cameFromNode: {fileID: 0}
 --- !u!1 &4147499168716994776
 GameObject:
   m_ObjectHideFlags: 0
@@ -435,6 +442,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   side: 2
+  isAqctive: 1
   wall: {fileID: 4147499168716994776}
 --- !u!1 &4225375888075131941
 GameObject:
@@ -932,6 +940,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   side: 0
+  isAqctive: 1
   wall: {fileID: 5389096745662694642}
 --- !u!1 &6084474103031379419
 GameObject:
@@ -1145,6 +1154,7 @@ GameObject:
   m_Component:
   - component: {fileID: 227297156612344968}
   - component: {fileID: 6993589137522760785}
+  - component: {fileID: 5725488484947967272}
   m_Layer: 6
   m_Name: Wall
   m_TagString: Untagged
@@ -1219,6 +1229,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &5725488484947967272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7131644102263880503}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1865dfdf7c7c4478ba5509fd4757ddd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  door: 0
+  doorGO: {fileID: 7131644102263880503}
 --- !u!1 &7541243220596768977
 GameObject:
   m_ObjectHideFlags: 0
@@ -1313,6 +1337,7 @@ GameObject:
   m_Component:
   - component: {fileID: 125664108015814472}
   - component: {fileID: 1380624272590527123}
+  - component: {fileID: 2129632495739259255}
   m_Layer: 6
   m_Name: Wall
   m_TagString: Untagged
@@ -1387,6 +1412,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2129632495739259255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7888957939002982279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1865dfdf7c7c4478ba5509fd4757ddd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  door: 1
+  doorGO: {fileID: 7888957939002982279}
 --- !u!1 &8645570896310262162
 GameObject:
   m_ObjectHideFlags: 0
@@ -1563,6 +1602,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   side: 3
+  isAqctive: 1
   wall: {fileID: 8849777294733285210}
 --- !u!1 &8980132825625508722
 GameObject:
@@ -1656,4 +1696,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   side: 1
+  isAqctive: 1
   wall: {fileID: 8980132825625508722}

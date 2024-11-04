@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace ProceduralMazeGeneration
@@ -30,6 +29,9 @@ namespace ProceduralMazeGeneration
         {
             if (Input.GetKeyDown(KeyCode.A))
                 ReGenerateMaze();
+
+            if (Input.GetKeyDown(KeyCode.P))
+                SetPathFinding();
         }
 
         private void GenerateMaze()
@@ -60,13 +62,14 @@ namespace ProceduralMazeGeneration
                         _startPosition.y + j * cellSize.y);
 
                     var mazeCell = Instantiate(mazeCellPrefab, cellPosition, Quaternion.identity);
+                    mazeCell.SetGridIndices(i, j);
                     _grid[i, j] = mazeCell;
-
+                    
                     if (i == 0 && j == 0)
-                        mazeCell.IsEntrance();
+                        mazeCell.InitDoor(Door.Entrance);
 
                     if (i == gridSize.x - 1 && j == gridSize.y - 1)
-                        mazeCell.IsExit();
+                        mazeCell.InitDoor(Door.Exit);
                 }
             }
         }
@@ -97,14 +100,16 @@ namespace ProceduralMazeGeneration
 
         private IEnumerable<MazeCell> GetUnvisitedNeighbours(MazeCell currentMazeCell)
         {
-            var gridPoint = ((Vector2)currentMazeCell.transform.position - _startPosition) / cellSize;
-            var (i, j) = ((int)gridPoint.x, (int)gridPoint.y);
+            var position = currentMazeCell.transform.position;
+
+            var i = Mathf.RoundToInt((position.x - _startPosition.x) / cellSize.x);
+            var j = Mathf.RoundToInt((position.y - _startPosition.y) / cellSize.y);
 
             if (i + 1 < gridSize.x)
                 if (_grid[i + 1, j].IsVisited == false)
                     yield return _grid[i + 1, j];
 
-            if (i - 1 > 0)
+            if (i - 1 >= 0)
                 if (_grid[i - 1, j].IsVisited == false)
                     yield return _grid[i - 1, j];
 
@@ -112,7 +117,7 @@ namespace ProceduralMazeGeneration
                 if (_grid[i, j + 1].IsVisited == false)
                     yield return _grid[i, j + 1];
 
-            if (j - 1 > 0)
+            if (j - 1 >= 0)
                 if (_grid[i, j - 1].IsVisited == false)
                     yield return _grid[i, j - 1];
         }
@@ -144,6 +149,14 @@ namespace ProceduralMazeGeneration
                 previousMazeCell.ClearWall(Side.Bottom);
                 currentMazeCell.ClearWall(Side.Top);
             }
+        }
+
+        private void SetPathFinding()
+        {
+            PathFinding.PathFinding pathfinding = new PathFinding.PathFinding(_grid);
+            var pathNodes = pathfinding.FindPath(0, 0, gridSize.x - 1, gridSize.y - 1);
+            Debug.Log(pathNodes);
+            pathNodes.ForEach(n => Debug.Log($"{n.x} {n.y}"));
         }
     }
 }
