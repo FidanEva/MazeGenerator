@@ -1,12 +1,13 @@
-using System.Linq;
 using UnityEngine;
 
 namespace ProceduralMazeGeneration
 {
     public class MazeCell : MonoBehaviour
     {
-        [SerializeField] private MazeWall[] walls = new MazeWall[4];
-
+        [SerializeField] private GameObject leftWall;
+        [SerializeField] private GameObject rightWall;
+        [SerializeField] private GameObject topWall;
+        [SerializeField] private GameObject bottomWall;
         [SerializeField] private GameObject unvisitedWall;
 
         [Space] [SerializeField] private GameObject entranceDoor;
@@ -30,20 +31,34 @@ namespace ProceduralMazeGeneration
             exitDoor.SetActive(false);
         }
 
-        public void ClearWall(Side argSide)
+        public void ClearLeftWall()
         {
-            var wall = walls.FirstOrDefault(w => w.side == argSide);
-            if (wall is not null)
-                wall.ClearWall();
+            leftWall.SetActive(false);
+        }
+
+        public void ClearRightWall()
+        {
+            rightWall.SetActive(false);
+        }
+
+        public void ClearTopWall()
+        {
+            topWall.SetActive(false);
+        }
+
+        public void ClearBottomWall()
+        {
+            bottomWall.SetActive(false);
         }
 
         public void Reset()
         {
             IsVisited = false;
-
-            foreach (var mazeWall in walls)
-                mazeWall.Reset();
-
+            
+            leftWall.SetActive(true);
+            rightWall.SetActive(true);
+            topWall.SetActive(true);
+            bottomWall.SetActive(true);
             unvisitedWall.SetActive(true);
         }
     }

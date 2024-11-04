@@ -1,7 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace ProceduralMazeGeneration
@@ -76,7 +76,7 @@ namespace ProceduralMazeGeneration
             currentMazeCell.Visit();
             ClearWalls(previousMazeCell, currentMazeCell);
 
-            yield return null;
+            yield return new WaitForSeconds(0.5f);
 
             MazeCell nextMazeCell;
             do
@@ -100,20 +100,20 @@ namespace ProceduralMazeGeneration
             var gridPoint = ((Vector2)currentMazeCell.transform.position - _startPosition) / cellSize;
             var (i, j) = ((int)gridPoint.x, (int)gridPoint.y);
 
-            if (i + 1 < gridSize.x)
-                if (_grid[i + 1, j].IsVisited == false)
+            if (gridPoint.x + 1 < gridSize.x)
+                if (!_grid[i + 1, j].IsVisited)
                     yield return _grid[i + 1, j];
 
-            if (i - 1 > 0)
-                if (_grid[i - 1, j].IsVisited == false)
+            if (gridPoint.x - 1 > 0)
+                if (!_grid[i - 1, j].IsVisited)
                     yield return _grid[i - 1, j];
 
-            if (j + 1 < gridSize.y)
-                if (_grid[i, j + 1].IsVisited == false)
+            if (gridPoint.y + 1 < gridSize.y)
+                if (!_grid[i, j + 1].IsVisited)
                     yield return _grid[i, j + 1];
 
-            if (j - 1 > 0)
-                if (_grid[i, j - 1].IsVisited == false)
+            if (gridPoint.y - 1 > 0)
+                if (!_grid[i, j - 1].IsVisited)
                     yield return _grid[i, j - 1];
         }
 
@@ -123,26 +123,26 @@ namespace ProceduralMazeGeneration
 
             if (previousMazeCell.transform.position.x < currentMazeCell.transform.position.x)
             {
-                previousMazeCell.ClearWall(Side.Right);
-                currentMazeCell.ClearWall(Side.Left);
+                previousMazeCell.ClearRightWall();
+                currentMazeCell.ClearLeftWall();
             }
 
             if (previousMazeCell.transform.position.x > currentMazeCell.transform.position.x)
             {
-                previousMazeCell.ClearWall(Side.Left);
-                currentMazeCell.ClearWall(Side.Right);
+                previousMazeCell.ClearLeftWall();
+                currentMazeCell.ClearRightWall();
             }
 
             if (previousMazeCell.transform.position.y < currentMazeCell.transform.position.y)
             {
-                previousMazeCell.ClearWall(Side.Top);
-                currentMazeCell.ClearWall(Side.Bottom);
+                previousMazeCell.ClearTopWall();
+                currentMazeCell.ClearBottomWall();
             }
 
             if (previousMazeCell.transform.position.y > currentMazeCell.transform.position.y)
             {
-                previousMazeCell.ClearWall(Side.Bottom);
-                currentMazeCell.ClearWall(Side.Top);
+                previousMazeCell.ClearBottomWall();
+                currentMazeCell.ClearTopWall();
             }
         }
     }
