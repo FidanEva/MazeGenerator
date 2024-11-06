@@ -5,18 +5,18 @@ namespace ProceduralMazeGeneration
     public class MazeWall : MonoBehaviour
     {
         public Side side;
-        public bool isAqctive = true;
+        public bool isActive = true;
         [SerializeField] private GameObject wall;
 
         public void ClearWall()
         {
-            isAqctive = false;
+            isActive = false;
             wall.SetActive(false);
         }
 
         public void Reset()
         {
-            isAqctive = true;
+            isActive = true;
             wall.SetActive(true);
         }
     }

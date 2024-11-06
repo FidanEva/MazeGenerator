@@ -25,6 +25,12 @@ namespace ProceduralMazeGeneration
             if (door != null) door.Init();
         }
 
+        public bool WallIsActive(Side argSide)
+        {
+            var wall = walls.FirstOrDefault(w => w.side == argSide);
+            return wall != null && wall.isActive;
+        }
+
         public void ClearWall(Side argSide)
         {
             var wall = walls.FirstOrDefault(w => w.side == argSide);
@@ -48,7 +54,7 @@ namespace ProceduralMazeGeneration
 
         public int x;
         public int y;
-        
+
         public int gCost = int.MaxValue;
         public int hCost;
         public int fCost;
@@ -59,7 +65,7 @@ namespace ProceduralMazeGeneration
         {
             this.x = x;
             this.y = y;
-            
+
             CalculateFCost();
         }
 

@@ -2,6 +2,7 @@
 using System.Linq;
 using ProceduralMazeGeneration;
 using UnityEngine;
+using Zenject;
 
 namespace PathFinding
 {
@@ -10,19 +11,22 @@ namespace PathFinding
         private const int MoveStraightCost = 10;
         private const int MoveDiagonalCost = 10;
 
-        private readonly MazeCell[,] _grid;
         private List<MazeCell> _openList;
         private List<MazeCell> _closedList;
 
-        public PathFinding(MazeCell[,] argGrid)
+        private readonly ProceduralMazeGeneration.ProceduralMazeGeneration _mazeGeneration;
+
+        [Inject]
+        public PathFinding(ProceduralMazeGeneration.ProceduralMazeGeneration mazeGeneration)
         {
-            _grid = argGrid;
+            Debug.Log("pathFinding cor");
+            _mazeGeneration = mazeGeneration;
         }
 
         public List<MazeCell> FindPath(int startX, int startY, int endX, int endY)
         {
-            MazeCell startNode = _grid[startX, startY];
-            MazeCell endNode = _grid[endX, endY];
+            MazeCell startNode = _mazeGeneration.Grid[startX, startY];
+            MazeCell endNode = _mazeGeneration.Grid[endX, endY];
 
             if (startNode is null || endNode is null)
             {
@@ -33,11 +37,11 @@ namespace PathFinding
             _openList = new List<MazeCell> { startNode };
             _closedList = new List<MazeCell>();
 
-            for (var x = 0; x < _grid.GetLength(0); x++)
+            for (var x = 0; x < _mazeGeneration.Grid.GetLength(0); x++)
             {
-                for (var y = 0; y < _grid.GetLength(1); y++)
+                for (var y = 0; y < _mazeGeneration.Grid.GetLength(1); y++)
                 {
-                    MazeCell cell = _grid[x, y];
+                    MazeCell cell = _mazeGeneration.Grid[x, y];
                     cell.gCost = int.MaxValue;
                     cell.CalculateFCost();
                     cell.cameFromNode = null;
@@ -87,16 +91,32 @@ namespace PathFinding
             List<MazeCell> neighbourList = new List<MazeCell>();
 
             if (currentNode.x - 1 >= 0)
-                neighbourList.Add(_grid[currentNode.x - 1, currentNode.y]);
+            {
+                var leftNode = _mazeGeneration.Grid[currentNode.x - 1, currentNode.y];
+                if (!currentNode.WallIsActive(Side.Left) && !leftNode.WallIsActive(Side.Right))
+                    neighbourList.Add(leftNode);
+            }
 
-            if (currentNode.x + 1 < _grid.GetLength(0))
-                neighbourList.Add(_grid[currentNode.x + 1, currentNode.y]);
+            if (currentNode.x + 1 < _mazeGeneration.Grid.GetLength(0))
+            {
+                var rightNode = _mazeGeneration.Grid[currentNode.x + 1, currentNode.y];
+                if (!currentNode.WallIsActive(Side.Right) && !rightNode.WallIsActive(Side.Left))
+                    neighbourList.Add(rightNode);
+            }
 
             if (currentNode.y - 1 >= 0)
-                neighbourList.Add(_grid[currentNode.x, currentNode.y - 1]);
+            {
+                var bottomNode = _mazeGeneration.Grid[currentNode.x, currentNode.y - 1];
+                if (!currentNode.WallIsActive(Side.Bottom) && !bottomNode.WallIsActive(Side.Top))
+                    neighbourList.Add(bottomNode);
+            }
 
-            if (currentNode.y + 1 < _grid.GetLength(1))
-                neighbourList.Add(_grid[currentNode.x, currentNode.y + 1]);
+            if (currentNode.y + 1 < _mazeGeneration.Grid.GetLength(1))
+            {
+                var topNode = _mazeGeneration.Grid[currentNode.x, currentNode.y + 1];
+                if (!currentNode.WallIsActive(Side.Top) && !topNode.WallIsActive(Side.Bottom))
+                    neighbourList.Add(topNode);
+            }
 
             return neighbourList;
         }

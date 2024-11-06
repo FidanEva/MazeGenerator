@@ -7,17 +7,20 @@ namespace ProceduralMazeGeneration
 {
     public class ProceduralMazeGeneration : MonoBehaviour
     {
+        public event System.Action OnMazeRegenerated;
+
         [SerializeField] private MazeCell mazeCellPrefab;
 
         [SerializeField] private Vector2 cellSize;
         [SerializeField] private Vector2Int gridSize;
 
-        private MazeCell[,] _grid;
+        public MazeCell[,] Grid { get; private set; }
         private Vector2 _startPosition;
+        private bool _canGenerate;
 
         private void Start()
         {
-            _grid = new MazeCell[gridSize.x, gridSize.y];
+            Grid = new MazeCell[gridSize.x, gridSize.y];
 
             _startPosition = new Vector2(-(cellSize.x * gridSize.x) * 0.5f + cellSize.x * 0.5f,
                 -(cellSize.y * gridSize.y) * 0.5f + cellSize.y * 0.5f);
@@ -28,27 +31,25 @@ namespace ProceduralMazeGeneration
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.A))
-                ReGenerateMaze();
-
-            if (Input.GetKeyDown(KeyCode.P))
-                SetPathFinding();
+                if (_canGenerate)
+                    ReGenerateMaze();
         }
 
         private void GenerateMaze()
         {
             PopulateCells();
-            StartCoroutine(GenerateMaze(null, _grid[0, 0]));
+            StartCoroutine(GenerateMaze(null, Grid[0, 0]));
         }
 
         private void ReGenerateMaze()
         {
             ClearGrid();
-            StartCoroutine(GenerateMaze(null, _grid[0, 0]));
+            StartCoroutine(GenerateMaze(null, Grid[0, 0]));
         }
 
         private void ClearGrid()
         {
-            foreach (var mazeCell in _grid)
+            foreach (var mazeCell in Grid)
                 mazeCell.Reset();
         }
 
@@ -63,8 +64,8 @@ namespace ProceduralMazeGeneration
 
                     var mazeCell = Instantiate(mazeCellPrefab, cellPosition, Quaternion.identity);
                     mazeCell.SetGridIndices(i, j);
-                    _grid[i, j] = mazeCell;
-                    
+                    Grid[i, j] = mazeCell;
+
                     if (i == 0 && j == 0)
                         mazeCell.InitDoor(Door.Entrance);
 
@@ -76,6 +77,8 @@ namespace ProceduralMazeGeneration
 
         private IEnumerator GenerateMaze(MazeCell previousMazeCell, MazeCell currentMazeCell)
         {
+            _canGenerate = false;
+
             currentMazeCell.Visit();
             ClearWalls(previousMazeCell, currentMazeCell);
 
@@ -88,6 +91,11 @@ namespace ProceduralMazeGeneration
                 if (nextMazeCell is not null)
                 {
                     yield return GenerateMaze(currentMazeCell, nextMazeCell);
+                }
+                else
+                {
+                    OnMazeRegenerated?.Invoke();
+                    _canGenerate = true;
                 }
             } while (nextMazeCell is not null);
         }
@@ -106,20 +114,20 @@ namespace ProceduralMazeGeneration
             var j = Mathf.RoundToInt((position.y - _startPosition.y) / cellSize.y);
 
             if (i + 1 < gridSize.x)
-                if (_grid[i + 1, j].IsVisited == false)
-                    yield return _grid[i + 1, j];
+                if (Grid[i + 1, j].IsVisited == false)
+                    yield return Grid[i + 1, j];
 
             if (i - 1 >= 0)
-                if (_grid[i - 1, j].IsVisited == false)
-                    yield return _grid[i - 1, j];
+                if (Grid[i - 1, j].IsVisited == false)
+                    yield return Grid[i - 1, j];
 
             if (j + 1 < gridSize.y)
-                if (_grid[i, j + 1].IsVisited == false)
-                    yield return _grid[i, j + 1];
+                if (Grid[i, j + 1].IsVisited == false)
+                    yield return Grid[i, j + 1];
 
             if (j - 1 >= 0)
-                if (_grid[i, j - 1].IsVisited == false)
-                    yield return _grid[i, j - 1];
+                if (Grid[i, j - 1].IsVisited == false)
+                    yield return Grid[i, j - 1];
         }
 
         private void ClearWalls(MazeCell previousMazeCell, MazeCell currentMazeCell)
@@ -149,14 +157,6 @@ namespace ProceduralMazeGeneration
                 previousMazeCell.ClearWall(Side.Bottom);
                 currentMazeCell.ClearWall(Side.Top);
             }
-        }
-
-        private void SetPathFinding()
-        {
-            PathFinding.PathFinding pathfinding = new PathFinding.PathFinding(_grid);
-            var pathNodes = pathfinding.FindPath(0, 0, gridSize.x - 1, gridSize.y - 1);
-            Debug.Log(pathNodes);
-            pathNodes.ForEach(n => Debug.Log($"{n.x} {n.y}"));
         }
     }
 }
